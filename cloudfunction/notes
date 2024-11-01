@@ -1,0 +1,18 @@
+To create vpc serverless connector
+==================================
+gcloud compute networks vpc-access connectors create cf-connector \
+--region=us-east1 \
+--network=default \
+--range=10.8.0.0/28 \
+--min-instances=2 \
+--max-instances=3 \
+--machine-type=f1-micro
+
+To Invoke the cloud function 
+============================
+curl -m 70 -X POST https://us-east1-team-plutus-iisc.cloudfunctions.net/send_bangalore_data_to_kafka \
+-H "Authorization: bearer $(gcloud auth print-identity-token)" \
+-H "Content-Type: application/json" \
+-d '{
+  "name": "Hello World"
+}'

@@ -1,0 +1,4 @@
+functions-framework==3.*
+numpy==1.23.5
+pandas==1.5.3
+kafka-python==2.0.2
