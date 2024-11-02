@@ -27,7 +27,7 @@ def generate_bangalore_sample_data(num_records=100):
 # Kafka producer configuration
 def create_kafka_producer():
     return KafkaProducer(
-        bootstrap_servers=['10.142.0.3:9092'],  # Replace <GCP_VM_IP> with your Kafka broker IP address
+        bootstrap_servers=['10.142.0.3:9092'],
         value_serializer=lambda v: json.dumps(v).encode('utf-8')
     )
 
