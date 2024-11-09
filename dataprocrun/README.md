@@ -1,5 +1,5 @@
 # Kafka to BigQuery Streaming Pipeline
-This project contains a Spark application designed to run on a Google Dataproc cluster. It reads streaming data from Kafka, processes it using Spark Structured Streaming, and writes it to a Google BigQuery table in real-time.
+This project contains a Spark application designed to run on a Google Dataproc cluster. It reads streaming data from Kafka, processes it using Spark Structured Streaming, and writes it to a Google BigQuery table in near real-time.
 
 # Overview
 This pipeline enables real-time data ingestion from Kafka and stores processed data in BigQuery, providing a scalable solution for handling streaming data on Google Cloud.
@@ -81,62 +81,63 @@ This setup provides a resilient, scalable streaming data pipeline that leverages
 
 
 # Bigquery table schema
+```yaml
 
 [
   {
     "name": "hashed_device_id",
     "mode": "NULLABLE",
     "type": "STRING",
-    "description": "",
+    "description": "Anonymized device id",
     "fields": []
   },
   {
     "name": "timezone_visit",
     "mode": "NULLABLE",
     "type": "STRING",
-    "description": "",
+    "description": "Visited Timezone",
     "fields": []
   },
   {
     "name": "day_of_week_visit",
     "mode": "NULLABLE",
     "type": "STRING",
-    "description": "",
+    "description": "Day of the week",
     "fields": []
   },
   {
     "name": "time_stamp",
     "mode": "NULLABLE",
     "type": "STRING",
-    "description": "",
+    "description": "Time stamp",
     "fields": []
   },
   {
     "name": "lat_visit",
     "mode": "NULLABLE",
     "type": "STRING",
-    "description": "",
+    "description": "Latitide details",
     "fields": []
   },
   {
-    "name": "data_visit",
+    "name": "date_visit",
     "mode": "NULLABLE",
     "type": "STRING",
-    "description": "",
+    "description": "Visited Date",
     "fields": []
   },
   {
     "name": "time_visit",
     "mode": "NULLABLE",
     "type": "STRING",
-    "description": "",
+    "description": "Visited time",
     "fields": []
   },
   {
     "name": "lon_visit",
     "mode": "NULLABLE",
     "type": "STRING",
-    "description": "",
+    "description": "Longitude details",
     "fields": []
   }
 ]
