@@ -20,7 +20,7 @@ message_schema = StructType([
     StructField("day_of_week_visit", StringType(), True),
     StructField("time_stamp", StringType(), True),
     StructField("lat_visit", StringType(), True),
-    StructField("data_visit", StringType(), True),
+    StructField("date_visit", StringType(), True),
     StructField("time_visit", StringType(), True),
     StructField("lon_visit", StringType(), True)
 ])
@@ -42,7 +42,7 @@ parsed_df = kafka_df.selectExpr("CAST(value AS STRING)") \
     .select("data.*")  # Extract the individual fields
 
 # BigQuery configuration
-bigquery_table = "team-plutus-iisc.location.visited_location"
+bigquery_table = "team-plutus-iisc.location.location_visited"
 
 # Function to write micro-batch to BigQuery
 def write_to_bigquery(df, epoch_id):
