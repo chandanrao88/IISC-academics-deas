@@ -54,8 +54,13 @@ timestamp fields
 
 4. Data Processing
 
-Reads Kafka messages and parses them according to the defined schema
-Extracts individual fields for transformation and storage
+- Reads Kafka messages and parses them according to the defined schema.
+   - Extracts individual fields for transformation and storage.
+  - **Data Transformation**:
+     - Masking `hashed_device_id` using SHA-256 hash and a substitution cipher.
+     - Concatenating latitude and longitude into a single `location` column.
+     - Obfuscating `location` by adding random noise to latitude and longitude.
+     - Converting `time_stamp` from Unix format to datetime format.
 
 5. BigQuery Configuration
 
