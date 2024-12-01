@@ -53,6 +53,12 @@ Defines a schema for Kafka messages in JSON format with fields like:
 - lon_visit
 - timestamp
 
+Example records in Kafka:
+````
+{"device_id": "+447652281079", "timezone_visit": "UTC+0", "day_of_week_visit": "Friday", "time_stamp": 1731655224.390121, "lat_visit": 53.549933, "data_visit": "2024-11-29", "time_visit": "04:08:15", "lon_visit": -2.433338}
+{"device_id": "+447774158921", "timezone_visit": "UTC+0", "day_of_week_visit": "Thursday", "time_stamp": 1731482424.390124, "lat_visit": 53.549947, "data_visit": "2024-11-03", "time_visit": "07:59:04", "lon_visit": -2.433206}
+````
+
 ## 4. Data Processing
 
 - Reads Kafka messages and parses them according to the defined schema.
@@ -153,3 +159,8 @@ This setup provides a resilient, scalable streaming data pipeline that leverages
     "fields": []
   }
 ]
+````
+
+Final output in BQ table example :-
+
+![BiqQuery Output](Sample-output.png)

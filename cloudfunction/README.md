@@ -69,6 +69,12 @@ curl -m 70 -X POST https://us-east1-team-plutus-iisc.cloudfunctions.net/location
 }'
 ````
 
+Example output :
+````
+{"device_id": "+447652281079", "timezone_visit": "UTC+0", "day_of_week_visit": "Friday", "time_stamp": 1731655224.390121, "lat_visit": 53.549933, "data_visit": "2024-11-29", "time_visit": "04:08:15", "lon_visit": -2.433338}
+{"device_id": "+447774158921", "timezone_visit": "UTC+0", "day_of_week_visit": "Thursday", "time_stamp": 1731482424.390124, "lat_visit": 53.549947, "data_visit": "2024-11-03", "time_visit": "07:59:04", "lon_visit": -2.433206}
+````
+
 ### Kafka Producer Setup:
 create_kafka_producer initializes a Kafka producer with JSON serialization to communicate with the Kafka server.
 
