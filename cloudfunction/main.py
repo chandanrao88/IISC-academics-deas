@@ -10,7 +10,7 @@ def generate_sample_data(lat, lon, num_records=100):
     days_of_week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
     data = {
-        'hashed_device_id': [f"+44 7{random.randint(100000000, 999999999)}" for _ in range(num_records)],
+        'device_id': [f"+447{random.randint(100000000, 999999999)}" for _ in range(num_records)],
         'timezone_visit': ['UTC+0'] * num_records,  # Default to UTC+0; adjust if needed
         'day_of_week_visit': [random.choice(days_of_week) for _ in range(num_records)],
         'time_stamp': [(datetime.now() - timedelta(days=random.randint(0, 30))).timestamp() for _ in range(num_records)],
