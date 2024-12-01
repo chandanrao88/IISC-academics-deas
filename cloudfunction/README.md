@@ -1,12 +1,21 @@
 # Mobility Data Kafka Publisher Cloud Function
 
-This repository contains a Google Cloud Function that generates synthetic mobility footfall data for Bangalore and sends it to a Kafka topic. The function simulates location and visit data for a specified number of devices and publishes this data in JSON format to Kafka for downstream processing or analytics.
+This repository contains a Google Cloud Function that generates synthetic mobility footfall data and sends it to a Kafka topic. 
+The provided code defines a cloud function to generate and push sample mobility footfall data to Kafka. It starts by importing necessary libraries like pandas, random, datetime, and kafka.
+
+The core functionality revolves around generating mock mobility data, including device IDs, visit times, locations (latitude and longitude), and associated timestamps. The generate_sample_data function creates a DataFrame with randomly generated values for these fields, simulating visitor data for a specified location and a given number of records.
+
+The create_kafka_producer function sets up a Kafka producer configured to send data to a Kafka server located at a specified address. The push_data_to_kafka function iterates over the DataFrame and sends each row as a message to a Kafka topic ("visit-data-topic").
+
+The location_data_gen function is an HTTP-triggered cloud function that processes incoming requests. It expects JSON input containing latitude, longitude, and the number of records to generate. It validates the input, generates the sample data, and pushes it to Kafka. If any errors occur (e.g., missing or invalid parameters), appropriate error messages are returned.
+
+Overall, the code simulates location-based visit data and sends it to a Kafka topic for further processing or analysis.
 
 # Overview
 
 ## The Cloud Function:
 
-Generates random sample records representing footfall data in Bangalore, including fields like latitude, longitude, and visit time.
+Generates random sample records representing footfall data, including fields like latitude, longitude, and visit time.
 
 Connects to a Kafka broker and pushes the generated records to a specified Kafka topic.
 
@@ -35,9 +44,19 @@ A Google Cloud project with permissions to deploy Cloud Functions.
 
 ### Data Generation:
 The location_data_gen function creates a DataFrame with synthetic footfall data, including:
-hashed_device_id: Simulated device identifiers.
-timezone_visit, day_of_week_visit, time_stamp, lat_visit, lon_visit, data_visit, and time_visit: Various fields representing the location, timestamp, and visit details for each record.
+- device_id: Simulated device identifiers.
+- timezone_visit
+- day_of_week_visit
+- time_stamp
+- lat_visit
+- lon_visit
+- data_visit
+- time_visit
+
+Various fields representing the location, timestamp, and visit details for each record.
 By default, it generates 100 records, though this can be adjusted.
+
+Sample HTTPS calls to generate random test records example :- 
 
 ````
 curl -m 70 -X POST https://us-east1-team-plutus-iisc.cloudfunctions.net/location-data-gen \
@@ -48,7 +67,6 @@ curl -m 70 -X POST https://us-east1-team-plutus-iisc.cloudfunctions.net/location
   "lon": "-2.4333",
   "num_records": "500"
 }'
-
 ````
 
 ### Kafka Producer Setup:
@@ -60,16 +78,13 @@ The push_data_to_kafka function iterates over each row in the DataFrame, convert
 ### Cloud Function HTTP Trigger:
 The location_data_gen function is the entry point for this Cloud Function. It accepts an HTTP request with two optional parameters:
 
-### num_records: 
-Number of data records to generate (default is 100).
-
 ### topic: 
 Kafka topic to which the data will be sent (default is 'visit-data-topic').
 
 ## Code Steps
 
 ### Generate Data:
-The function generates synthetic mobility data using generate_bangalore_sample_data.
+The function generates synthetic mobility data using location_data_gen.
 
 ### Create Kafka Producer:
 A Kafka producer is created with create_kafka_producer to send data to the Kafka topic.
