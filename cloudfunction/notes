@@ -10,9 +10,11 @@ gcloud compute networks vpc-access connectors create cf-connector \
 
 To Invoke the cloud function 
 ============================
-curl -m 70 -X POST https://us-east1-team-plutus-iisc.cloudfunctions.net/send_bangalore_data_to_kafka \
+curl -m 70 -X POST https://us-east1-team-plutus-iisc.cloudfunctions.net/location-data-gen \
 -H "Authorization: bearer $(gcloud auth print-identity-token)" \
 -H "Content-Type: application/json" \
 -d '{
-  "name": "Hello World"
+  "lat": "53.5500",
+  "lon": "-2.4333",
+  "num_records": "500"
 }'

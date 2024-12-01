@@ -5,21 +5,19 @@ from datetime import datetime, timedelta
 from kafka import KafkaProducer
 import json
 
-# Function to generate sample mobility footfall data in Bangalore
-def generate_bangalore_sample_data(num_records=100):
-    bangalore_lat = 12.9821
-    bangalore_lon = 77.5806
+# Function to generate sample mobility footfall data for a given location
+def generate_sample_data(lat, lon, num_records=100):
     days_of_week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
     data = {
-        'hashed_device_id': [f'device_{i}' for i in range(num_records)],
-        'timezone_visit': ['UTC+5:30'] * num_records,
+        'hashed_device_id': [f"+44 7{random.randint(100000000, 999999999)}" for _ in range(num_records)],
+        'timezone_visit': ['UTC+0'] * num_records,  # Default to UTC+0; adjust if needed
         'day_of_week_visit': [random.choice(days_of_week) for _ in range(num_records)],
         'time_stamp': [(datetime.now() - timedelta(days=random.randint(0, 30))).timestamp() for _ in range(num_records)],
-        'lat_visit': [round(bangalore_lat + random.uniform(-0.01, 0.01), 6) for _ in range(num_records)],
+        'lat_visit': [round(lat + random.uniform(-0.0001, 0.0001), 6) for _ in range(num_records)],
         'data_visit': [(datetime.now() - timedelta(days=random.randint(0, 30))).date().isoformat() for _ in range(num_records)],
         'time_visit': [datetime.now().time().replace(hour=random.randint(0, 23), minute=random.randint(0, 59), second=random.randint(0, 59)).strftime('%H:%M:%S') for _ in range(num_records)],
-        'lon_visit': [round(bangalore_lon + random.uniform(-0.01, 0.01), 6) for _ in range(num_records)]
+        'lon_visit': [round(lon + random.uniform(-0.0001, 0.0001), 6) for _ in range(num_records)]
     }
     df = pd.DataFrame(data)
     return df
@@ -39,16 +37,28 @@ def push_data_to_kafka(df, topic):
     producer.flush()  # Ensure all messages are sent before closing
     producer.close()
 
-# Cloud Function Entry Point
 @functions_framework.http
-def send_bangalore_data_to_kafka(request):
-    num_records = int(request.args.get('num_records', 100))  # Default to 100 if not specified
-    topic = request.args.get('topic', 'visit-data-topic')  # Default topic if not specified
+def location_data_gen(request):
+    try:
+        request_json = request.get_json()
 
-    # Generate sample data
-    sample_data = generate_bangalore_sample_data(num_records)
+        if not request_json:
+            return "Invalid JSON body.", 400
 
-    # Push data to Kafka
-    push_data_to_kafka(sample_data, topic)
-    
-    return f"Successfully sent {num_records} records to Kafka topic '{topic}'.", 200
+        # Extract required parameters
+        lat = float(request_json['lat'])
+        lon = float(request_json['lon'])
+        num_records = int(request_json['num_records'])
+
+        # Generate data and push to Kafka
+        sample_data = generate_sample_data(lat, lon, num_records)
+        push_data_to_kafka(sample_data, "visit-data-topic")
+
+        return f"Successfully processed {num_records} records for lat={lat}, lon={lon}.", 200
+
+    except KeyError as e:
+        return f"Missing required parameter: {str(e)}", 400
+    except ValueError as e:
+        return f"Invalid parameter value: {str(e)}", 400
+    except Exception as e:
+        return f"An error occurred: {str(e)}", 500

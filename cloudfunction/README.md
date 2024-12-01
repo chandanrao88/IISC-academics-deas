@@ -34,10 +34,22 @@ A Google Cloud project with permissions to deploy Cloud Functions.
 ## Main Components
 
 ### Data Generation:
-The generate_bangalore_sample_data function creates a DataFrame with synthetic footfall data, including:
+The location_data_gen function creates a DataFrame with synthetic footfall data, including:
 hashed_device_id: Simulated device identifiers.
 timezone_visit, day_of_week_visit, time_stamp, lat_visit, lon_visit, data_visit, and time_visit: Various fields representing the location, timestamp, and visit details for each record.
 By default, it generates 100 records, though this can be adjusted.
+
+````
+curl -m 70 -X POST https://us-east1-team-plutus-iisc.cloudfunctions.net/location-data-gen \
+-H "Authorization: bearer $(gcloud auth print-identity-token)" \
+-H "Content-Type: application/json" \
+-d '{
+  "lat": "53.5500",
+  "lon": "-2.4333",
+  "num_records": "500"
+}'
+
+````
 
 ### Kafka Producer Setup:
 create_kafka_producer initializes a Kafka producer with JSON serialization to communicate with the Kafka server.
@@ -46,7 +58,7 @@ create_kafka_producer initializes a Kafka producer with JSON serialization to co
 The push_data_to_kafka function iterates over each row in the DataFrame, converting it to a dictionary and sending it as a message to the specified Kafka topic.
 
 ### Cloud Function HTTP Trigger:
-The send_bangalore_data_to_kafka function is the entry point for this Cloud Function. It accepts an HTTP request with two optional parameters:
+The location_data_gen function is the entry point for this Cloud Function. It accepts an HTTP request with two optional parameters:
 
 ### num_records: 
 Number of data records to generate (default is 100).
