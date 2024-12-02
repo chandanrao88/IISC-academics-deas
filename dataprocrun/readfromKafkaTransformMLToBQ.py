@@ -1,6 +1,6 @@
 import os
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import from_json, col,  sha2, from_unixtime, when,floor
+from pyspark.sql.functions import from_json, col, sha2, from_unixtime, when, floor, lit
 from pyspark.sql.types import StructType, StructField, StringType, DoubleType
 from pyspark.ml.clustering import KMeans
 from pyspark.ml.feature import VectorAssembler
@@ -59,47 +59,57 @@ parsed_df = kafka_df.selectExpr("CAST(value AS STRING)") \
 vector_assembler = VectorAssembler(inputCols=["lat_visit", "lon_visit"], outputCol="features")
 vectorized_df = vector_assembler.transform(parsed_df)
 
-# Elbow Method to find the optimal number of clusters (useful for non-streaming data)
+# Utility function to check if a DataFrame is empty
+def is_empty(df):
+    return df.select(lit(1)).limit(1).count() == 0
+
+# Elbow Method to find the optimal number of clusters
 def find_optimal_k(data, max_k=10):
+    if data.count() < 2:  # Minimum rows required for clustering
+        raise ValueError("Insufficient data to determine optimal K")
     evaluator = ClusteringEvaluator()
     costs = []
-    
     for k in range(2, max_k + 1):
         kmeans = KMeans(k=k, seed=42, featuresCol="features")
         model = kmeans.fit(data)
         predictions = model.transform(data)
         cost = evaluator.evaluate(predictions)
         costs.append(cost)
-    
-    # Find the best k by minimizing cost
     optimal_k = np.argmin(costs) + 2  # Since k starts from 2
     return optimal_k
 
+# Function to apply KMeans clustering on micro-batches
 def apply_kmeans_on_batch(batch_df, batch_id):
-    # Determine the optimal number of clusters (if you want dynamic adjustment)
-    optimal_k = find_optimal_k(batch_df)
-    
-    # Fit KMeans model on the batch data
+    print(f"Processing batch {batch_id} with {batch_df.count()} rows.")
+    if is_empty(batch_df):
+        print(f"Batch {batch_id} is empty. Skipping processing.")
+        return
+
+    # Determine the optimal number of clusters
+    try:
+        optimal_k = find_optimal_k(batch_df)
+    except ValueError as e:
+        print(f"Error determining optimal K for batch {batch_id}: {e}")
+        return
+
+    # Fit KMeans model
     kmeans = KMeans(k=optimal_k, seed=42, featuresCol="features", predictionCol="cluster_pred")
-    model = kmeans.fit(batch_df)  # Model training on the batch data
-    
-    # Transform and add prediction
+    model = kmeans.fit(batch_df)
     clustered_df = model.transform(batch_df)
 
-    # Select relevant columns including device_id and date_visit (if they are available in the batch_df)
+    # Select relevant columns
     final_df = clustered_df.select(
-        "device_id",  # Ensure device_id is included
-        "date_visit",  # Ensure date_visit is included
+        "device_id",
+        "date_visit",
         "lat_visit",
         "lon_visit",
         "cluster_pred"
     )
-    
-    # Write the clustered data to BigQuery
+
+    # Write to BigQuery
     write_to_bigquery(final_df, batch_id)
 
-
-# Function to write micro-batch to BigQuery
+# Function to write DataFrame to BigQuery
 def write_to_bigquery(df, epoch_id):
     df.write \
         .format("com.google.cloud.spark.bigquery.v2.Spark34BigQueryTableProvider") \
