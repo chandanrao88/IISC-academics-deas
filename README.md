@@ -1,4 +1,4 @@
-# Team Plutus Project - IISc Data Engineering at Scale academics purposes
+# Team Plutus Project - Real-Time Insights for Mobility and Safety
 
 ![Project Logo](Plutus-logo.png)
 
