@@ -1,0 +1,5 @@
+streamlit==1.22.0
+pandas==2.0.2
+folium==0.14.0
+streamlit-folium==0.10.0
+google-cloud-bigquery==3.8.0
