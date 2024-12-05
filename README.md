@@ -4,7 +4,7 @@
 - Chandan Kumar Rao
 - Danish Akhlaq
 - Ishika Saxena
-- Prasanna Kumar B V M
+- Prasanna Kumar B V
 
 
 ## 📋 Table of Contents
