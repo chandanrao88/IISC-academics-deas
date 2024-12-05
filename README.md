@@ -1,6 +1,11 @@
-# Team Plutus Project - Realtime Insights for Mobility and Safety
+# Project Title - Realtime Insights for Mobility and Safety
 
-![Project Logo](Plutus-logo.png)
+# Team Members
+- Chandan Kumar Rao
+- Danish Akhlaq
+- Ishika Saxena
+- Prasanna Kumar B V M
+
 
 ## 📋 Table of Contents
 - [Introduction](#introduction)
